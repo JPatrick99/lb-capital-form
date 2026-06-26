@@ -253,25 +253,21 @@
     btn.textContent = 'Submitting…';
 
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ rows }),
-        headers: {}
-      });
-      const json = await res.json();
+  await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({ rows }),
+  });
 
-      if (json.status === 'success') {
-        document.getElementById('form-body').style.display = 'none';
-        document.getElementById('successScreen').style.display = 'block';
-      } else {
-        throw new Error(json.message || 'Unknown error');
-      }
-    } catch (err) {
-      errorMsg.textContent = 'Submission failed: ' + err.message + '. Please try again or contact LB Capital.';
-      errorMsg.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Submit order';
-    }
+  document.getElementById('form-body').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+
+} catch (err) {
+  errorMsg.textContent = 'Submission failed: ' + err.message + '. Please try again or contact LB Capital.';
+  errorMsg.style.display = 'block';
+  btn.disabled = false;
+  btn.textContent = 'Submit order';
+}
   }
 
   function resetForm() {
