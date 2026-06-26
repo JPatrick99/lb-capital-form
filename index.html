@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LB Capital — Partner Brand Asset Order Form</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a1a; font-size: 15px; line-height: 1.6; }
+  .page { max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .header { margin-bottom: 2rem; }
+  .header .eyebrow { font-size: 12px; color: #888; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .header h1 { font-size: 22px; font-weight: 500; }
+  .card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #888; margin-bottom: 1rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-grid.full { grid-template-columns: 1fr; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12px; color: #666; }
+  .field input { width: 100%; padding: 8px 10px; border: 0.5px solid #d0d0d0; border-radius: 8px; font-size: 14px; background: #fafafa; color: #1a1a1a; outline: none; transition: border-color 0.15s; }
+  .field input:focus { border-color: #1a3a5c; background: #fff; }
+  .phase-tabs { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .phase-tab { flex: 1; padding: 10px 8px; border: 0.5px solid #d0d0d0; border-radius: 8px; background: #fff; cursor: pointer; font-size: 13px; text-align: center; color: #666; transition: all 0.15s; }
+  .phase-tab .num { font-weight: 500; color: #1a1a1a; display: block; }
+  .phase-tab .sub { font-size: 11px; display: block; margin-top: 2px; color: #999; }
+  .phase-tab.active { background: #e8eef5; border-color: #1a3a5c; }
+  .phase-tab.active .num { color: #1a3a5c; }
+  .phase-tab.active .sub { color: #4a6a8c; }
+  .phase-section { display: none; }
+  .phase-section.active { display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { font-size: 11px; font-weight: 500; color: #888; text-align: left; padding: 6px 8px; border-bottom: 0.5px solid #e8e8e8; }
+  thead th:last-child { text-align: right; }
+  tbody td { padding: 9px 8px; border-bottom: 0.5px solid #f0f0f0; vertical-align: middle; color: #1a1a1a; }
+  tbody td:last-child { text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  .sku { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: #aaa; }
+  .badge { font-size: 11px; background: #eaf5ee; color: #2d7a4a; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .qty { width: 64px; padding: 4px 8px; font-size: 13px; text-align: center; border: 0.5px solid #d0d0d0; border-radius: 6px; background: #fafafa; color: #1a1a1a; }
+  .qty:focus { outline: none; border-color: #1a3a5c; }
+  .submit-btn { width: 100%; padding: 13px; background: #1a3a5c; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 1.25rem; transition: opacity 0.15s; }
+  .submit-btn:hover { opacity: 0.88; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .success { display: none; text-align: center; padding: 4rem 1rem; }
+  .success .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .success h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+  .success p { color: #666; font-size: 14px; margin-bottom: 1.5rem; }
+  .reset-btn { padding: 8px 20px; border: 0.5px solid #d0d0d0; border-radius: 8px; background: transparent; cursor: pointer; font-size: 14px; color: #444; }
+  .error-msg { display: none; background: #fef2f2; border: 0.5px solid #fca5a5; color: #991b1b; font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-top: 12px; }
+  @media (max-width: 500px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .phase-tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">LB Capital Roofing Companies</div>
+    <h1>Partner brand asset order</h1>
+  </div>
+
+  <div id="form-body">
+
+    <!-- Order details -->
+    <div class="card">
+      <div class="card-title">Order details</div>
+      <div class="field-grid" style="margin-bottom: 12px;">
+        <div class="field"><label>Partner company *</label><input type="text" id="company" placeholder="Company name" /></div>
+        <div class="field"><label>Branch</label><input type="text" id="branch" placeholder="Branch" /></div>
+      </div>
+      <div class="field-grid" style="margin-bottom: 12px;">
+        <div class="field"><label>Requested by *</label><input type="text" id="requestedBy" placeholder="Full name" /></div>
+        <div class="field"><label>Ship to</label><input type="text" id="shipTo" placeholder="Address or location" /></div>
+      </div>
+      <div class="field-grid">
+        <div class="field"><label>Date</label><input type="date" id="orderDate" /></div>
+        <div class="field"><label>Order number</label><input type="text" id="orderNum" placeholder="Auto-assigned if blank" /></div>
+      </div>
+    </div>
+
+    <!-- Phase tabs -->
+    <div style="font-size: 12px; color: #888; margin-bottom: 8px; padding-left: 2px; text-transform: uppercase; letter-spacing: 0.06em;">Select phase</div>
+    <div class="phase-tabs">
+      <div class="phase-tab active" onclick="switchPhase(0)"><span class="num">Form 001</span><span class="sub">Initial brand launch</span></div>
+      <div class="phase-tab" onclick="switchPhase(1)"><span class="num">Form 002</span><span class="sub">90-day expansion</span></div>
+      <div class="phase-tab" onclick="switchPhase(2)"><span class="num">Form 003</span><span class="sub">180-day marketing</span></div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="phase-section active" id="phase-0">
+      <div class="card">
+        <div class="card-title">Brand apparel</div>
+        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="sku">APP001</td><td>Salesperson polos</td><td><span class="badge">2 per salesperson</span></td><td><input class="qty" type="number" min="0" data-sku="APP001" data-item="Salesperson polos" /></td></tr>
+          <tr><td class="sku">APP002</td><td>PM t-shirts</td><td><span class="badge">3 per PM</span></td><td><input class="qty" type="number" min="0" data-sku="APP002" data-item="PM t-shirts" /></td></tr>
+          <tr><td class="sku">APP003</td><td>PM hoodies</td><td><span class="badge">2 per PM</span></td><td><input class="qty" type="number" min="0" data-sku="APP003" data-item="PM hoodies" /></td></tr>
+          <tr><td class="sku">APP004</td><td>CSR polos</td><td><span class="badge">2 per CSR</span></td><td><input class="qty" type="number" min="0" data-sku="APP004" data-item="CSR polos" /></td></tr>
+          <tr><td class="sku">APP005</td><td>Subcontractor safety vests</td><td><span class="badge">50</span></td><td><input class="qty" type="number" min="0" data-sku="APP005" data-item="Subcontractor safety vests" /></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-title">Brand collateral</div>
+        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="sku">COL001</td><td>Job signs</td><td><span class="badge">100</span></td><td><input class="qty" type="number" min="0" data-sku="COL001" data-item="Job signs" /></td></tr>
+          <tr><td class="sku">COL002</td><td>Door hangers</td><td><span class="badge">1000</span></td><td><input class="qty" type="number" min="0" data-sku="COL002" data-item="Door hangers" /></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase-section" id="phase-1">
+      <div class="card">
+        <div class="card-title">Apparel expansion</div>
+        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="sku">APP101</td><td>Additional salesperson polos</td><td><span class="badge">3 per salesperson</span></td><td><input class="qty" type="number" min="0" data-sku="APP101" data-item="Additional salesperson polos" /></td></tr>
+          <tr><td class="sku">APP102</td><td>PM t-shirts</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP102" data-item="PM t-shirts" /></td></tr>
+          <tr><td class="sku">APP103</td><td>PM hoodies</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP103" data-item="PM hoodies" /></td></tr>
+          <tr><td class="sku">APP104</td><td>Quarter zips</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP104" data-item="Quarter zips" /></td></tr>
+          <tr><td class="sku">APP105</td><td>Winter vests</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP105" data-item="Winter vests" /></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-title">Customer experience</div>
+        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="sku">CX001</td><td>Branded coffee cups</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="CX001" data-item="Branded coffee cups" /></td></tr>
+          <tr><td class="sku">CX002</td><td>Branded candy</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="CX002" data-item="Branded candy" /></td></tr>
+          <tr><td class="sku">COL003</td><td>Door hangers</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="COL003" data-item="Door hangers" /></td></tr>
+          <tr><td class="sku">COL004</td><td>Job signs</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="COL004" data-item="Job signs" /></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase-section" id="phase-2">
+      <div class="card">
+        <div class="card-title">Events marketing</div>
+        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="sku">EV001</td><td>Trifolds</td><td><span class="badge">1000</span></td><td><input class="qty" type="number" min="0" data-sku="EV001" data-item="Trifolds" /></td></tr>
+          <tr><td class="sku">EV002</td><td>Pop-up tent</td><td><span class="badge">1</span></td><td><input class="qty" type="number" min="0" data-sku="EV002" data-item="Pop-up tent" /></td></tr>
+          <tr><td class="sku">EV003</td><td>Table skirt</td><td><span class="badge">1</span></td><td><input class="qty" type="number" min="0" data-sku="EV003" data-item="Table skirt" /></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-title">Promotional items</div>
+        <table><thead><tr><th>SKU</th><th>Item</th><th>Suggested</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="sku">PR001</td><td>Pens</td><td>500</td><td><input class="qty" type="number" min="0" data-sku="PR001" data-item="Pens" /></td></tr>
+          <tr><td class="sku">PR002</td><td>Chip clips</td><td>500</td><td><input class="qty" type="number" min="0" data-sku="PR002" data-item="Chip clips" /></td></tr>
+          <tr><td class="sku">PR003</td><td>Hand sanitizer</td><td>500</td><td><input class="qty" type="number" min="0" data-sku="PR003" data-item="Hand sanitizer" /></td></tr>
+          <tr><td class="sku">PR004</td><td>Keychains</td><td>500</td><td><input class="qty" type="number" min="0" data-sku="PR004" data-item="Keychains" /></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-title">Reorder checklist</div>
+        <table><thead><tr><th>Category</th><th>Qty requested</th></tr></thead>
+        <tbody>
+          <tr><td>Salesperson polos</td><td><input class="qty" type="number" min="0" data-sku="RO-APP001" data-item="Reorder – Salesperson polos" /></td></tr>
+          <tr><td>Quarter zips</td><td><input class="qty" type="number" min="0" data-sku="RO-APP104" data-item="Reorder – Quarter zips" /></td></tr>
+          <tr><td>Winter vests</td><td><input class="qty" type="number" min="0" data-sku="RO-APP105" data-item="Reorder – Winter vests" /></td></tr>
+          <tr><td>PM t-shirts</td><td><input class="qty" type="number" min="0" data-sku="RO-APP002" data-item="Reorder – PM t-shirts" /></td></tr>
+          <tr><td>PM hoodies</td><td><input class="qty" type="number" min="0" data-sku="RO-APP003" data-item="Reorder – PM hoodies" /></td></tr>
+          <tr><td>CSR polos</td><td><input class="qty" type="number" min="0" data-sku="RO-APP004" data-item="Reorder – CSR polos" /></td></tr>
+          <tr><td>Safety vests</td><td><input class="qty" type="number" min="0" data-sku="RO-APP005" data-item="Reorder – Safety vests" /></td></tr>
+          <tr><td>Door hangers</td><td><input class="qty" type="number" min="0" data-sku="RO-COL002" data-item="Reorder – Door hangers" /></td></tr>
+          <tr><td>Job signs</td><td><input class="qty" type="number" min="0" data-sku="RO-COL001" data-item="Reorder – Job signs" /></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Submit order</button>
+    <div class="error-msg" id="errorMsg"></div>
+
+  </div><!-- /form-body -->
+
+  <div class="success" id="successScreen">
+    <div class="icon">✅</div>
+    <h2>Order submitted</h2>
+    <p>Your order has been logged. LB Capital will be in touch to confirm fulfillment.</p>
+    <button class="reset-btn" onclick="resetForm()">Submit another order</button>
+  </div>
+</div>
+
+<script>
+  // ─── CONFIGURATION ───────────────────────────────────────────────
+  // Paste your Apps Script Web App URL here after deploying
+  const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+  // ─────────────────────────────────────────────────────────────────
+
+  const PHASE_LABELS = [
+    'Form 001 – Initial Brand Launch',
+    'Form 002 – 90-Day Expansion',
+    'Form 003 – 180-Day Marketing'
+  ];
+
+  let currentPhase = 0;
+
+  function switchPhase(idx) {
+    document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+    document.querySelectorAll('.phase-section').forEach((s, i) => s.classList.toggle('active', i === idx));
+    currentPhase = idx;
+  }
+
+  function collectRows() {
+    const meta = [
+      new Date().toLocaleString(),
+      PHASE_LABELS[currentPhase],
+      document.getElementById('company').value.trim(),
+      document.getElementById('branch').value.trim(),
+      document.getElementById('requestedBy').value.trim(),
+      document.getElementById('shipTo').value.trim(),
+      document.getElementById('orderDate').value,
+      document.getElementById('orderNum').value.trim() || 'auto'
+    ];
+
+    const rows = [];
+    const activeSection = document.getElementById('phase-' + currentPhase);
+    activeSection.querySelectorAll('.qty').forEach(input => {
+      if (input.value && Number(input.value) > 0) {
+        rows.push([...meta, input.dataset.sku, input.dataset.item, input.value]);
+      }
+    });
+    return rows;
+  }
+
+  async function handleSubmit() {
+    const company = document.getElementById('company').value.trim();
+    const requestedBy = document.getElementById('requestedBy').value.trim();
+    const errorMsg = document.getElementById('errorMsg');
+
+    errorMsg.style.display = 'none';
+
+    if (!company || !requestedBy) {
+      errorMsg.textContent = 'Please fill in the partner company name and requested by fields.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    const rows = collectRows();
+    if (rows.length === 0) {
+      errorMsg.textContent = 'Please enter at least one quantity before submitting.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ rows }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const json = await res.json();
+
+      if (json.status === 'success') {
+        document.getElementById('form-body').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+      } else {
+        throw new Error(json.message || 'Unknown error');
+      }
+    } catch (err) {
+      errorMsg.textContent = 'Submission failed: ' + err.message + '. Please try again or contact LB Capital.';
+      errorMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit order';
+    }
+  }
+
+  function resetForm() {
+    document.querySelectorAll('input').forEach(i => i.value = '');
+    document.getElementById('orderDate').valueAsDate = new Date();
+    document.getElementById('form-body').style.display = 'block';
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Submit order';
+    switchPhase(0);
+  }
+
+  document.getElementById('orderDate').valueAsDate = new Date();
+</script>
+</body>
+</html>
