@@ -14,7 +14,6 @@
   .card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
   .card-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #888; margin-bottom: 1rem; }
   .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .field-grid.full { grid-template-columns: 1fr; }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field label { font-size: 12px; color: #666; }
   .field input { width: 100%; padding: 8px 10px; border: 0.5px solid #d0d0d0; border-radius: 8px; font-size: 14px; background: #fafafa; color: #1a1a1a; outline: none; transition: border-color 0.15s; }
@@ -61,8 +60,6 @@
   </div>
 
   <div id="form-body">
-
-    <!-- Order details -->
     <div class="card">
       <div class="card-title">Order details</div>
       <div class="field-grid" style="margin-bottom: 12px;">
@@ -79,7 +76,6 @@
       </div>
     </div>
 
-    <!-- Phase tabs -->
     <div style="font-size: 12px; color: #888; margin-bottom: 8px; padding-left: 2px; text-transform: uppercase; letter-spacing: 0.06em;">Select phase</div>
     <div class="phase-tabs">
       <div class="phase-tab active" onclick="switchPhase(0)"><span class="num">Form 001</span><span class="sub">Initial brand launch</span></div>
@@ -175,8 +171,7 @@
 
     <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Submit order</button>
     <div class="error-msg" id="errorMsg"></div>
-
-  </div><!-- /form-body -->
+  </div>
 
   <div class="success" id="successScreen">
     <div class="icon">✅</div>
@@ -187,10 +182,7 @@
 </div>
 
 <script>
-  // ─── CONFIGURATION ───────────────────────────────────────────────
-  // Paste your Apps Script Web App URL here after deploying
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzObopAACctjsPnVWegpQ8jq73inEVXj8L1PO0w-6mzsKfhJX1PWlSwB3pMKX3W8IOBLg/exec';
-  // ─────────────────────────────────────────────────────────────────
 
   const PHASE_LABELS = [
     'Form 001 – Initial Brand Launch',
@@ -217,7 +209,6 @@
       document.getElementById('orderDate').value,
       document.getElementById('orderNum').value.trim() || 'auto'
     ];
-
     const rows = [];
     const activeSection = document.getElementById('phase-' + currentPhase);
     activeSection.querySelectorAll('.qty').forEach(input => {
@@ -228,11 +219,10 @@
     return rows;
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const company = document.getElementById('company').value.trim();
     const requestedBy = document.getElementById('requestedBy').value.trim();
     const errorMsg = document.getElementById('errorMsg');
-
     errorMsg.style.display = 'none';
 
     if (!company || !requestedBy) {
@@ -252,22 +242,37 @@
     btn.disabled = true;
     btn.textContent = 'Submitting…';
 
-    try {
-  await fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify({ rows }),
-  });
+    const callbackName = 'jsonp_callback_' + Date.now();
+    window[callbackName] = function(response) {
+      document.getElementById('form-body').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      delete window[callbackName];
+      document.getElementById(callbackName) && document.getElementById(callbackName).remove();
+    };
 
-  document.getElementById('form-body').style.display = 'none';
-  document.getElementById('successScreen').style.display = 'block';
+    const script = document.createElement('script');
+    script.id = callbackName;
+    script.src = APPS_SCRIPT_URL +
+      '?callback=' + callbackName +
+      '&data=' + encodeURIComponent(JSON.stringify({ rows }));
 
-} catch (err) {
-  errorMsg.textContent = 'Submission failed: ' + err.message + '. Please try again or contact LB Capital.';
-  errorMsg.style.display = 'block';
-  btn.disabled = false;
-  btn.textContent = 'Submit order';
-}
+    script.onerror = function() {
+      errorMsg.textContent = 'Submission failed. Please try again or contact LB Capital.';
+      errorMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit order';
+      delete window[callbackName];
+    };
+
+    setTimeout(function() {
+      if (window[callbackName]) {
+        document.getElementById('form-body').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        delete window[callbackName];
+      }
+    }, 5000);
+
+    document.body.appendChild(script);
   }
 
   function resetForm() {
