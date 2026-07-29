@@ -58,7 +58,6 @@
     <div class="eyebrow">LB Capital Roofing Companies</div>
     <h1>Partner brand asset order</h1>
   </div>
-
   <div id="form-body">
     <div class="card">
       <div class="card-title">Order details</div>
@@ -75,14 +74,12 @@
         <div class="field"><label>Order number</label><input type="text" id="orderNum" placeholder="Auto-assigned if blank" /></div>
       </div>
     </div>
-
     <div style="font-size: 12px; color: #888; margin-bottom: 8px; padding-left: 2px; text-transform: uppercase; letter-spacing: 0.06em;">Select phase</div>
     <div class="phase-tabs">
       <div class="phase-tab active" onclick="switchPhase(0)"><span class="num">Form 001</span><span class="sub">Initial brand launch</span></div>
       <div class="phase-tab" onclick="switchPhase(1)"><span class="num">Form 002</span><span class="sub">90-day expansion</span></div>
       <div class="phase-tab" onclick="switchPhase(2)"><span class="num">Form 003</span><span class="sub">180-day marketing</span></div>
     </div>
-
     <!-- Phase 1 -->
     <div class="phase-section active" id="phase-0">
       <div class="card">
@@ -105,7 +102,6 @@
         </tbody></table>
       </div>
     </div>
-
     <!-- Phase 2 -->
     <div class="phase-section" id="phase-1">
       <div class="card">
@@ -130,7 +126,6 @@
         </tbody></table>
       </div>
     </div>
-
     <!-- Phase 3 -->
     <div class="phase-section" id="phase-2">
       <div class="card">
@@ -168,11 +163,9 @@
         </tbody></table>
       </div>
     </div>
-
     <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Submit order</button>
     <div class="error-msg" id="errorMsg"></div>
   </div>
-
   <div class="success" id="successScreen">
     <div class="icon">✅</div>
     <h2>Order submitted</h2>
@@ -180,24 +173,19 @@
     <button class="reset-btn" onclick="resetForm()">Submit another order</button>
   </div>
 </div>
-
 <script>
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-Pd8Hb6xIq3LfYaVCY8o_ZJiLeNH5dNr-_L88IUUpxHLwqrfWIGWpCQI-On29AbEJ/exec';
-
   const PHASE_LABELS = [
     'Form 001 – Initial Brand Launch',
     'Form 002 – 90-Day Expansion',
     'Form 003 – 180-Day Marketing'
   ];
-
   let currentPhase = 0;
-
   function switchPhase(idx) {
     document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
     document.querySelectorAll('.phase-section').forEach((s, i) => s.classList.toggle('active', i === idx));
     currentPhase = idx;
   }
-
   function collectRows() {
     const meta = [
       new Date().toLocaleString(),
@@ -218,36 +206,56 @@
     });
     return rows;
   }
-
+  function showError(message) {
+    const errorMsg = document.getElementById('errorMsg');
+    errorMsg.textContent = message;
+    errorMsg.style.display = 'block';
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.textContent = 'Submit order';
+  }
   function handleSubmit() {
     const company = document.getElementById('company').value.trim();
     const requestedBy = document.getElementById('requestedBy').value.trim();
     const errorMsg = document.getElementById('errorMsg');
     errorMsg.style.display = 'none';
-
     if (!company || !requestedBy) {
-      errorMsg.textContent = 'Please fill in the partner company name and requested by fields.';
-      errorMsg.style.display = 'block';
+      showError('Please fill in the partner company name and requested by fields.');
       return;
     }
-
     const rows = collectRows();
     if (rows.length === 0) {
-      errorMsg.textContent = 'Please enter at least one quantity before submitting.';
-      errorMsg.style.display = 'block';
+      showError('Please enter at least one quantity before submitting.');
       return;
     }
-
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.textContent = 'Submitting…';
 
     const callbackName = 'jsonp_callback_' + Date.now();
-    window[callbackName] = function(response) {
-      document.getElementById('form-body').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'block';
+    let settled = false;
+
+    const cleanup = function() {
       delete window[callbackName];
-      document.getElementById(callbackName) && document.getElementById(callbackName).remove();
+      const tag = document.getElementById(callbackName);
+      if (tag) tag.remove();
+      clearTimeout(timeoutId);
+    };
+
+    window[callbackName] = function(response) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      // IMPORTANT: only show success if the server actually reports success.
+      // A previous version of this form showed the success screen
+      // unconditionally, which hid real send failures from the user.
+      if (response && response.status === 'success') {
+        document.getElementById('form-body').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+      } else {
+        const detail = (response && (response.message || response.status)) || 'unknown error';
+        showError('Submission failed: ' + detail + '. Please try again or contact LB Capital.');
+      }
     };
 
     const script = document.createElement('script');
@@ -255,36 +263,34 @@
     script.src = APPS_SCRIPT_URL +
       '?callback=' + callbackName +
       '&data=' + encodeURIComponent(JSON.stringify({ rows }));
-
     script.onerror = function() {
-      errorMsg.textContent = 'Submission failed. Please try again or contact LB Capital.';
-      errorMsg.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Submit order';
-      delete window[callbackName];
+      if (settled) return;
+      settled = true;
+      cleanup();
+      showError('Submission failed to reach the server. Please check your connection and try again.');
     };
 
-    setTimeout(function() {
-      if (window[callbackName]) {
-        document.getElementById('form-body').style.display = 'none';
-        document.getElementById('successScreen').style.display = 'block';
-        delete window[callbackName];
-      }
-    }, 5000);
+    // If nothing comes back within 15s, treat it as a failure rather than
+    // silently assuming success — a stuck/blocked request should be visible.
+    const timeoutId = setTimeout(function() {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      showError('Submission timed out. Please try again or contact LB Capital directly.');
+    }, 15000);
 
     document.body.appendChild(script);
   }
-
   function resetForm() {
     document.querySelectorAll('input').forEach(i => i.value = '');
     document.getElementById('orderDate').valueAsDate = new Date();
+    document.getElementById('errorMsg').style.display = 'none';
     document.getElementById('form-body').style.display = 'block';
     document.getElementById('successScreen').style.display = 'none';
     document.getElementById('submitBtn').disabled = false;
     document.getElementById('submitBtn').textContent = 'Submit order';
     switchPhase(0);
   }
-
   document.getElementById('orderDate').valueAsDate = new Date();
 </script>
 </body>
