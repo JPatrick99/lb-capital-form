@@ -46,9 +46,29 @@
   .success p { color: #666; font-size: 14px; margin-bottom: 1.5rem; }
   .reset-btn { padding: 8px 20px; border: 0.5px solid #d0d0d0; border-radius: 8px; background: transparent; cursor: pointer; font-size: 14px; color: #444; }
   .error-msg { display: none; background: #fef2f2; border: 0.5px solid #fca5a5; color: #991b1b; font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-top: 12px; }
+
+  /* Apparel items with size lines */
+  .apparel-item { padding: 12px 0; border-bottom: 0.5px solid #f0f0f0; }
+  .apparel-item:last-child { border-bottom: none; }
+  .apparel-item-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .apparel-item-header .sku { min-width: 58px; }
+  .apparel-item-header .item-name { font-size: 14px; color: #1a1a1a; flex: 1; }
+  .size-lines { display: flex; flex-direction: column; gap: 8px; margin-left: 68px; }
+  .size-line { display: flex; gap: 8px; align-items: center; }
+  .size-select { flex: 0 0 auto; width: 130px; padding: 7px 8px; border: 0.5px solid #d0d0d0; border-radius: 6px; font-size: 13px; background: #fafafa; color: #1a1a1a; outline: none; }
+  .size-select:focus { border-color: #1a3a5c; background: #fff; }
+  .size-qty { width: 64px; padding: 4px 8px; font-size: 13px; text-align: center; border: 0.5px solid #d0d0d0; border-radius: 6px; background: #fafafa; color: #1a1a1a; }
+  .size-qty:focus { outline: none; border-color: #1a3a5c; }
+  .remove-line-btn { background: none; border: none; color: #bbb; font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; visibility: hidden; }
+  .remove-line-btn:hover { color: #991b1b; }
+  .add-size-btn { margin-left: 68px; margin-top: 6px; background: none; border: none; color: #1a3a5c; font-size: 12px; font-weight: 500; cursor: pointer; padding: 0; text-decoration: underline; }
+
   @media (max-width: 500px) {
     .field-grid { grid-template-columns: 1fr; }
     .phase-tabs { flex-direction: column; }
+    .size-lines { margin-left: 0; margin-top: 6px; }
+    .add-size-btn { margin-left: 0; }
+    .apparel-item-header { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -84,20 +104,94 @@
     <div class="phase-section active" id="phase-0">
       <div class="card">
         <div class="card-title">Brand apparel</div>
-        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
-        <tbody>
-          <tr><td class="sku">APP001</td><td>Salesperson polos</td><td><span class="badge">2 per salesperson</span></td><td><input class="qty" type="number" min="0" data-sku="APP001" data-item="Salesperson polos" /></td></tr>
-          <tr><td class="sku">APP002</td><td>PM t-shirts</td><td><span class="badge">3 per PM</span></td><td><input class="qty" type="number" min="0" data-sku="APP002" data-item="PM t-shirts" /></td></tr>
-          <tr><td class="sku">APP003</td><td>PM hoodies</td><td><span class="badge">2 per PM</span></td><td><input class="qty" type="number" min="0" data-sku="APP003" data-item="PM hoodies" /></td></tr>
-          <tr><td class="sku">APP004</td><td>CSR polos</td><td><span class="badge">2 per CSR</span></td><td><input class="qty" type="number" min="0" data-sku="APP004" data-item="CSR polos" /></td></tr>
-          <tr><td class="sku">APP005</td><td>Subcontractor safety vests</td><td><span class="badge">50</span></td><td><input class="qty" type="number" min="0" data-sku="APP005" data-item="Subcontractor safety vests" /></td></tr>
-        </tbody></table>
+
+        <div class="apparel-item" data-sku="APP001" data-item="Salesperson polos">
+          <div class="apparel-item-header">
+            <span class="sku">APP001</span>
+            <span class="item-name">Salesperson polos</span>
+            <span class="badge">2 per salesperson</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP002" data-item="PM t-shirts">
+          <div class="apparel-item-header">
+            <span class="sku">APP002</span>
+            <span class="item-name">PM t-shirts</span>
+            <span class="badge">3 per PM</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP003" data-item="PM hoodies">
+          <div class="apparel-item-header">
+            <span class="sku">APP003</span>
+            <span class="item-name">PM hoodies</span>
+            <span class="badge">2 per PM</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP004" data-item="CSR polos">
+          <div class="apparel-item-header">
+            <span class="sku">APP004</span>
+            <span class="item-name">CSR polos</span>
+            <span class="badge">2 per CSR</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP005" data-item="Subcontractor safety vests">
+          <div class="apparel-item-header">
+            <span class="sku">APP005</span>
+            <span class="item-name">Subcontractor safety vests</span>
+            <span class="badge">50</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
       </div>
       <div class="card">
         <div class="card-title">Brand collateral</div>
         <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
         <tbody>
-          <tr><td class="sku">COL001</td><td>Job signs</td><td><span class="badge">100</span></td><td><input class="qty" type="number" min="0" data-sku="COL001" data-item="Job signs" /></td></tr>
+          <tr><td class="sku">COL001</td><td>Lawn Signs</td><td><span class="badge">100</span></td><td><input class="qty" type="number" min="0" data-sku="COL001" data-item="Lawn Signs" /></td></tr>
+          <tr><td class="sku">COL005</td><td>Lawn Stakes</td><td><span class="badge">100</span></td><td><input class="qty" type="number" min="0" data-sku="COL005" data-item="Lawn Stakes" /></td></tr>
           <tr><td class="sku">COL002</td><td>Door hangers</td><td><span class="badge">1000</span></td><td><input class="qty" type="number" min="0" data-sku="COL002" data-item="Door hangers" /></td></tr>
         </tbody></table>
       </div>
@@ -106,14 +200,87 @@
     <div class="phase-section" id="phase-1">
       <div class="card">
         <div class="card-title">Apparel expansion</div>
-        <table><thead><tr><th>SKU</th><th>Item</th><th>Allocation</th><th>Qty</th></tr></thead>
-        <tbody>
-          <tr><td class="sku">APP101</td><td>Additional salesperson polos</td><td><span class="badge">3 per salesperson</span></td><td><input class="qty" type="number" min="0" data-sku="APP101" data-item="Additional salesperson polos" /></td></tr>
-          <tr><td class="sku">APP102</td><td>PM t-shirts</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP102" data-item="PM t-shirts" /></td></tr>
-          <tr><td class="sku">APP103</td><td>PM hoodies</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP103" data-item="PM hoodies" /></td></tr>
-          <tr><td class="sku">APP104</td><td>Quarter zips</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP104" data-item="Quarter zips" /></td></tr>
-          <tr><td class="sku">APP105</td><td>Winter vests</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="APP105" data-item="Winter vests" /></td></tr>
-        </tbody></table>
+
+        <div class="apparel-item" data-sku="APP101" data-item="Additional salesperson polos">
+          <div class="apparel-item-header">
+            <span class="sku">APP101</span>
+            <span class="item-name">Additional salesperson polos</span>
+            <span class="badge">3 per salesperson</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP102" data-item="PM t-shirts">
+          <div class="apparel-item-header">
+            <span class="sku">APP102</span>
+            <span class="item-name">PM t-shirts</span>
+            <span class="badge">As needed</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP103" data-item="PM hoodies">
+          <div class="apparel-item-header">
+            <span class="sku">APP103</span>
+            <span class="item-name">PM hoodies</span>
+            <span class="badge">As needed</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP104" data-item="Quarter zips">
+          <div class="apparel-item-header">
+            <span class="sku">APP104</span>
+            <span class="item-name">Quarter zips</span>
+            <span class="badge">As needed</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="APP105" data-item="Winter vests">
+          <div class="apparel-item-header">
+            <span class="sku">APP105</span>
+            <span class="item-name">Winter vests</span>
+            <span class="badge">As needed</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
       </div>
       <div class="card">
         <div class="card-title">Customer experience</div>
@@ -122,7 +289,8 @@
           <tr><td class="sku">CX001</td><td>Branded coffee cups</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="CX001" data-item="Branded coffee cups" /></td></tr>
           <tr><td class="sku">CX002</td><td>Branded candy</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="CX002" data-item="Branded candy" /></td></tr>
           <tr><td class="sku">COL003</td><td>Door hangers</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="COL003" data-item="Door hangers" /></td></tr>
-          <tr><td class="sku">COL004</td><td>Job signs</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="COL004" data-item="Job signs" /></td></tr>
+          <tr><td class="sku">COL004</td><td>Lawn Signs</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="COL004" data-item="Lawn Signs" /></td></tr>
+          <tr><td class="sku">COL006</td><td>Lawn Stakes</td><td>As needed</td><td><input class="qty" type="number" min="0" data-sku="COL006" data-item="Lawn Stakes" /></td></tr>
         </tbody></table>
       </div>
     </div>
@@ -149,17 +317,110 @@
       </div>
       <div class="card">
         <div class="card-title">Reorder checklist</div>
-        <table><thead><tr><th>Category</th><th>Qty requested</th></tr></thead>
+
+        <div class="apparel-item" data-sku="RO-APP001" data-item="Reorder – Salesperson polos">
+          <div class="apparel-item-header">
+            <span class="item-name">Salesperson polos</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="RO-APP104" data-item="Reorder – Quarter zips">
+          <div class="apparel-item-header">
+            <span class="item-name">Quarter zips</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="RO-APP105" data-item="Reorder – Winter vests">
+          <div class="apparel-item-header">
+            <span class="item-name">Winter vests</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="RO-APP002" data-item="Reorder – PM t-shirts">
+          <div class="apparel-item-header">
+            <span class="item-name">PM t-shirts</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="RO-APP003" data-item="Reorder – PM hoodies">
+          <div class="apparel-item-header">
+            <span class="item-name">PM hoodies</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="RO-APP004" data-item="Reorder – CSR polos">
+          <div class="apparel-item-header">
+            <span class="item-name">CSR polos</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <div class="apparel-item" data-sku="RO-APP005" data-item="Reorder – Safety vests">
+          <div class="apparel-item-header">
+            <span class="item-name">Safety vests</span>
+          </div>
+          <div class="size-lines">
+            <div class="size-line">
+              <select class="size-select"><option value="">Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select>
+              <input class="size-qty" type="number" min="0" placeholder="Qty" />
+              <button type="button" class="remove-line-btn" onclick="removeSizeLine(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-size-btn" onclick="addSizeLine(this)">+ Add another size</button>
+        </div>
+
+        <table style="margin-top: 8px;"><thead><tr><th>Category</th><th>Qty requested</th></tr></thead>
         <tbody>
-          <tr><td>Salesperson polos</td><td><input class="qty" type="number" min="0" data-sku="RO-APP001" data-item="Reorder – Salesperson polos" /></td></tr>
-          <tr><td>Quarter zips</td><td><input class="qty" type="number" min="0" data-sku="RO-APP104" data-item="Reorder – Quarter zips" /></td></tr>
-          <tr><td>Winter vests</td><td><input class="qty" type="number" min="0" data-sku="RO-APP105" data-item="Reorder – Winter vests" /></td></tr>
-          <tr><td>PM t-shirts</td><td><input class="qty" type="number" min="0" data-sku="RO-APP002" data-item="Reorder – PM t-shirts" /></td></tr>
-          <tr><td>PM hoodies</td><td><input class="qty" type="number" min="0" data-sku="RO-APP003" data-item="Reorder – PM hoodies" /></td></tr>
-          <tr><td>CSR polos</td><td><input class="qty" type="number" min="0" data-sku="RO-APP004" data-item="Reorder – CSR polos" /></td></tr>
-          <tr><td>Safety vests</td><td><input class="qty" type="number" min="0" data-sku="RO-APP005" data-item="Reorder – Safety vests" /></td></tr>
           <tr><td>Door hangers</td><td><input class="qty" type="number" min="0" data-sku="RO-COL002" data-item="Reorder – Door hangers" /></td></tr>
-          <tr><td>Job signs</td><td><input class="qty" type="number" min="0" data-sku="RO-COL001" data-item="Reorder – Job signs" /></td></tr>
+          <tr><td>Lawn Signs</td><td><input class="qty" type="number" min="0" data-sku="RO-COL001" data-item="Reorder – Lawn Signs" /></td></tr>
+          <tr><td>Lawn Stakes</td><td><input class="qty" type="number" min="0" data-sku="RO-COL005" data-item="Reorder – Lawn Stakes" /></td></tr>
         </tbody></table>
       </div>
     </div>
@@ -186,6 +447,35 @@
     document.querySelectorAll('.phase-section').forEach((s, i) => s.classList.toggle('active', i === idx));
     currentPhase = idx;
   }
+
+  // Add another size/qty line to a clothing item
+  function addSizeLine(btn) {
+    const item = btn.closest('.apparel-item');
+    const linesContainer = item.querySelector('.size-lines');
+    const template = linesContainer.querySelector('.size-line');
+    const newLine = template.cloneNode(true);
+    newLine.querySelector('.size-select').value = '';
+    newLine.querySelector('.size-qty').value = '';
+    linesContainer.appendChild(newLine);
+    updateRemoveButtons(linesContainer);
+  }
+
+  // Remove a size/qty line (always keep at least one line per item)
+  function removeSizeLine(btn) {
+    const linesContainer = btn.closest('.size-lines');
+    if (linesContainer.querySelectorAll('.size-line').length > 1) {
+      btn.closest('.size-line').remove();
+    }
+    updateRemoveButtons(linesContainer);
+  }
+
+  function updateRemoveButtons(linesContainer) {
+    const lines = linesContainer.querySelectorAll('.size-line');
+    lines.forEach(line => {
+      line.querySelector('.remove-line-btn').style.visibility = lines.length > 1 ? 'visible' : 'hidden';
+    });
+  }
+
   function collectRows() {
     const meta = [
       new Date().toLocaleString(),
@@ -199,11 +489,28 @@
     ];
     const rows = [];
     const activeSection = document.getElementById('phase-' + currentPhase);
-    activeSection.querySelectorAll('.qty').forEach(input => {
+
+    // Plain quantity items (collateral, events, promo, reorder checklist)
+    activeSection.querySelectorAll(':scope .qty').forEach(input => {
       if (input.value && Number(input.value) > 0) {
         rows.push([...meta, input.dataset.sku, input.dataset.item, input.value]);
       }
     });
+
+    // Clothing items with one or more size/qty lines
+    activeSection.querySelectorAll('.apparel-item').forEach(item => {
+      const sku = item.dataset.sku;
+      const itemName = item.dataset.item;
+      item.querySelectorAll('.size-line').forEach(line => {
+        const size = line.querySelector('.size-select').value;
+        const qty = line.querySelector('.size-qty').value;
+        if (qty && Number(qty) > 0) {
+          const label = size ? itemName + ' - Size ' + size : itemName;
+          rows.push([...meta, sku, label, qty]);
+        }
+      });
+    });
+
     return rows;
   }
   function showError(message) {
@@ -246,9 +553,7 @@
       if (settled) return;
       settled = true;
       cleanup();
-      // IMPORTANT: only show success if the server actually reports success.
-      // A previous version of this form showed the success screen
-      // unconditionally, which hid real send failures from the user.
+      // Only show success if the server actually reports success.
       if (response && response.status === 'success') {
         document.getElementById('form-body').style.display = 'none';
         document.getElementById('successScreen').style.display = 'block';
@@ -282,7 +587,24 @@
     document.body.appendChild(script);
   }
   function resetForm() {
-    document.querySelectorAll('input').forEach(i => i.value = '');
+    document.querySelectorAll('.field input, .field-grid input').forEach(i => i.value = '');
+    document.querySelectorAll('.qty').forEach(i => i.value = '');
+
+    // Reset each clothing item back to a single blank size/qty line
+    document.querySelectorAll('.apparel-item').forEach(item => {
+      const linesContainer = item.querySelector('.size-lines');
+      const lines = linesContainer.querySelectorAll('.size-line');
+      lines.forEach((line, idx) => {
+        if (idx === 0) {
+          line.querySelector('.size-select').value = '';
+          line.querySelector('.size-qty').value = '';
+        } else {
+          line.remove();
+        }
+      });
+      updateRemoveButtons(linesContainer);
+    });
+
     document.getElementById('orderDate').valueAsDate = new Date();
     document.getElementById('errorMsg').style.display = 'none';
     document.getElementById('form-body').style.display = 'block';
